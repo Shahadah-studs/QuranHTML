@@ -1,42 +1,296 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Read Quran Anywhere">
-         <link rel="icon" type="image/png" href="/quran.png?v=1">
-        <title>QuranHTML V0.1</title>
+        <link rel="icon" type="image/png" href="/quran.png?v=1">
+        <title>QuranHTML - Read the Holy Quran Anywhere</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --primary-green: #1a8917;
+                --accent-gold: #d6a85a;
+                --dark-bg: #0f3460;
+                --light-bg: #f5f5f5;
+                --text-dark: #1a1a1a;
+                --text-light: #ffffff;
+            }
+
+            body {
+                background: linear-gradient(135deg, #0f3460 0%, #16567e 50%, #0f3460 100%);
+                min-height: 100vh;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: var(--text-dark);
+                line-height: 1.6;
+            }
+
+            /* Decorative Islamic pattern background */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: 
+                    radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(26, 137, 23, 0.03) 0%, transparent 50%);
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .container {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 20px;
+                position: relative;
+                z-index: 1;
+            }
+
+            header {
+                text-align: center;
+                padding: 40px 20px;
+                margin-bottom: 40px;
+            }
+
+            .header-decoration {
+                font-size: 2.5em;
+                margin-bottom: 15px;
+                animation: pulse 3s ease-in-out infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.8; transform: scale(1.05); }
+            }
+
+            h1 {
+                font-size: 3.5em;
+                color: var(--accent-gold);
+                margin-bottom: 10px;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                font-weight: 700;
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: 1.3em;
+                color: var(--text-light);
+                margin-bottom: 5px;
+                font-weight: 300;
+            }
+
+            .tagline {
+                font-size: 1em;
+                color: var(--accent-gold);
+                font-style: italic;
+            }
+
+            .divider {
+                width: 150px;
+                height: 3px;
+                background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
+                margin: 30px auto;
+            }
+
+            h2 {
+                font-size: 2.2em;
+                color: var(--accent-gold);
+                text-align: center;
+                margin: 50px 0 40px;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+                position: relative;
+                padding-bottom: 20px;
+            }
+
+            h2::after {
+                content: '✦';
+                display: block;
+                font-size: 1.2em;
+                color: var(--primary-green);
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .surahs-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+                margin-bottom: 60px;
+            }
+
+            .surah-card {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 12px;
+                padding: 30px 25px;
+                text-align: center;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                transition: all 0.3s ease;
+                border-top: 4px solid var(--accent-gold);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .surah-card::before {
+                content: '☪';
+                position: absolute;
+                font-size: 3em;
+                color: rgba(212, 175, 55, 0.1);
+                top: 10px;
+                right: 15px;
+            }
+
+            .surah-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+                border-top-color: var(--primary-green);
+            }
+
+            .surah-card a {
+                display: inline-block;
+                text-decoration: none;
+                color: var(--text-light);
+                background: linear-gradient(135deg, var(--primary-green) 0%, #0d6612 100%);
+                padding: 14px 35px;
+                border-radius: 25px;
+                font-weight: 600;
+                font-size: 1.1em;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(26, 137, 23, 0.3);
+                margin-top: 15px;
+            }
+
+            .surah-card a:hover {
+                background: linear-gradient(135deg, #0d6612 0%, var(--primary-green) 100%);
+                box-shadow: 0 6px 20px rgba(26, 137, 23, 0.5);
+                transform: scale(1.05);
+            }
+
+            .surah-card a:active {
+                transform: scale(0.98);
+            }
+
+            .surah-title {
+                font-size: 1.5em;
+                color: var(--primary-green);
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+
+            .surah-description {
+                font-size: 0.95em;
+                color: #666;
+                margin-bottom: 15px;
+            }
+
+            .coming-soon {
+                background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(26, 137, 23, 0.1) 100%);
+                border: 2px dashed var(--accent-gold);
+                padding: 20px;
+                text-align: center;
+            }
+
+            .coming-soon p {
+                color: var(--accent-gold);
+                font-size: 1.1em;
+                font-weight: 500;
+            }
+
+            .version {
+                text-align: center;
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 0.9em;
+                padding: 20px;
+                margin-top: 40px;
+            }
+
+            footer {
+                text-align: center;
+                padding: 30px 20px;
+                color: rgba(255, 255, 255, 0.8);
+                border-top: 1px solid rgba(212, 175, 55, 0.3);
+                margin-top: 50px;
+            }
+
+            .footer-text {
+                font-size: 0.95em;
+                line-height: 1.8;
+            }
+
+            .islamic-accent {
+                color: var(--accent-gold);
+                font-weight: 600;
+            }
+
+            /* Responsive design */
+            @media (max-width: 768px) {
+                h1 {
+                    font-size: 2.5em;
+                }
+
+                h2 {
+                    font-size: 1.8em;
+                }
+
+                .header-decoration {
+                    font-size: 2em;
+                }
+
+                .surahs-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .surah-card {
+                    padding: 20px 15px;
+                }
+            }
+        </style>
     </head>
     <body>
-    <br>
-<br>
-<br>
-<br>
-    <style>
-        h3{color:rgb(61, 146, 161);
-             text-align:center;
-             
-        }
-h2{color:rgb(214, 168, 90);
-             text-align:center;}
-        a{color:rgb(61, 146, 161);
-            font-family:Mono;
-         }
-    body{ background-color:rgb(105, 107, 105);}
-        #E{border:double;
-            text-align:center;
-        }
-    h1{ text-align:center; font-family:"Sans";
-        color:rgb(20, 166, 57);
-    }
-     p{ text-align:center;
-         
-     }   
-    </style>
-<h1>QuranHTML</h1>
-<p id="I">Read the quran anywhere in any device</p>
-<h2>Surahs</h2>
-<h3 id="E"><a href="fatiha.html">Fatiha</a></h3>
-<h3 id="E">More coming in V0.2!</h3>
+        <div class="container">
+            <header>
+                <div class="header-decoration">☪️ ✨</div>
+                <h1>QuranHTML</h1>
+                <p class="subtitle">The Holy Quran Online</p>
+                <p class="tagline">Read the Quran Anywhere, Anytime, on Any Device</p>
+            </header>
+
+            <div class="divider"></div>
+
+            <main>
+                <h2>Select a Surah</h2>
+
+                <div class="surahs-grid">
+                    <div class="surah-card">
+                        <div class="surah-title">Surah Al-Fatiha</div>
+                        <p class="surah-description">The Opening - The first chapter of the Quran, recited in every prayer</p>
+                        <a href="fatiha.html">Read →</a>
+                    </div>
+
+                    <div class="surah-card coming-soon">
+                        <p>✨ More Surahs Coming Soon ✨</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">Stay tuned for additional chapters in <span class="islamic-accent">Version 0.2</span></p>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <div class="footer-text">
+                    <p>🌙 Alhamdulillah - All praise is due to Allah 🌙</p>
+                    <p style="margin-top: 10px; font-size: 0.85em;">QuranHTML v0.1 • Read the Noble Quran with beautiful design</p>
+                </div>
+                <div class="version">
+                    <p>Designed with ❤️ for the Ummah</p>
+                </div>
+            </footer>
+        </div>
     </body>
 </html>
